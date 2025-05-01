@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>roja45quotationspro</name>
+    <displayName><![CDATA[ToolE: Cotizaciones Pro]]></displayName>
+    <version><![CDATA[1.5.55]]></version>
+    <description><![CDATA[Habilite cotizaciones de productos para clientes con formularios personalizados y un sistema de respuesta a cotizaciones.]]></description>
+    <author><![CDATA[Inter-Soft]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+	<confirmUninstall><![CDATA[¿Está seguro de que desea borrar todos los datos guardados?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries></limited_countries>
+</module>
