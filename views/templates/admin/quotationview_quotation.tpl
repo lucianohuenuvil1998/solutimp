@@ -132,82 +132,107 @@
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="panel panel-actions clearfix">
-                    <div class="panel-heading">
-                        {l s='Actions' mod='roja45quotationspro'}
-                    </div>
-                    <div class="panel-body">
-                        {if !$quotation->is_template}
-                            <button type="button" class="btn btn-secondary btn-lg saveAsTemplate disabled-while-saving">
-                                <i class="icon-files-o"></i>
-                                {l s='Save As Template' mod='roja45quotationspro'}
-                            </button>
-                            {if $has_account}
-                                <button type="button" id="addQuotationToOrder"
-                                    class="btn btn-secondary btn-lg disabled-while-saving">
-                                    <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                    {l s='Create Order' mod='roja45quotationspro'}
+        <!-- LUCIANO -->
+        {if !$expirada || (string)Context::getContext()->employee->id_profile == '1'}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-actions clearfix">
+                        <div class="panel-heading">
+                            {l s='Actions' mod='roja45quotationspro'}
+                        </div>
+                        <div class="panel-body">
+                            {if !$quotation->is_template}
+                                <button type="button" class="btn btn-secondary btn-lg saveAsTemplate disabled-while-saving">
+                                    <i class="icon-files-o"></i>
+                                    {l s='Save As Template' mod='roja45quotationspro'}
+                                </button>
+                                {if $has_account}
+                                    <button type="button" id="addQuotationToOrder"
+                                        class="btn btn-secondary btn-lg disabled-while-saving">
+                                        <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                        {l s='Create Order' mod='roja45quotationspro'}
+                                    </button>
+                                {/if}
+                            {else}
+                                <button type="button"
+                                    class="btn btn-secondary btn-lg pull-right createQuote disabled-while-saving">
+                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                    {l s='Create Quote' mod='roja45quotationspro'}
                                 </button>
                             {/if}
-                        {else}
-                            <button type="button"
-                                class="btn btn-secondary btn-lg pull-right createQuote disabled-while-saving">
-                                <i class="fa fa-envelope-o" aria-hidden="true"></i>
-                                {l s='Create Quote' mod='roja45quotationspro'}
-                            </button>
+
+                            {if !$quotation->is_template}
+                                <button type="button"
+                                    onclick="location.href='{$quotationspro_link}&action=downloadPDFQuotation&id_roja45_quotation={$quotation->id}'"
+                                    id="downloadPDFQuotation"
+                                    class="btn btn-secondary btn-lg downloadPDFQuotation disabled-while-saving">
+                                    <i class="icon-file-pdf-o" aria-hidden="true"></i>
+                                    {l s='Download PDF' mod='roja45quotationspro'}
+                                </button>
+                                <button type="button" id="sendCustomerQuotation"
+                                    class="btn btn-primary btn-lg sendCustomerQuotation disabled-while-saving pull-right"
+                                    {if !$has_account}disabled="disabled" {/if}>
+                                    <i class="icon-envelope-o" aria-hidden="true"></i>
+                                    {l s='Review & Send' mod='roja45quotationspro'}
+                                </button>
+                            </div>
                         {/if}
-
-                        {if !$quotation->is_template}
-                            <button type="button"
-                                onclick="location.href='{$quotationspro_link}&action=downloadPDFQuotation&id_roja45_quotation={$quotation->id}'"
-                                id="downloadPDFQuotation"
-                                class="btn btn-secondary btn-lg downloadPDFQuotation disabled-while-saving">
-                                <i class="icon-file-pdf-o" aria-hidden="true"></i>
-                                {l s='Download PDF' mod='roja45quotationspro'}
-                            </button>
-                            <button type="button" id="sendCustomerQuotation"
-                                class="btn btn-primary btn-lg sendCustomerQuotation disabled-while-saving pull-right"
-                                {if !$has_account}disabled="disabled" {/if}>
-                                <i class="icon-envelope-o" aria-hidden="true"></i>
-                                {l s='Review & Send' mod='roja45quotationspro'}
-                            </button>
-                        </div>
-                    {/if}
-                    {if !$has_account}
-                        <div class="col-sm-12" style="margin-top: 5px;">
-                            <div class="row pull-left">
-                                <label
-                                    class="label label-danger">{l s='No Customer Account' mod='roja45quotationspro'}</label>
+                        {if !$has_account}
+                            <div class="col-sm-12" style="margin-top: 5px;">
+                                <div class="row pull-left">
+                                    <label
+                                        class="label label-danger">{l s='No Customer Account' mod='roja45quotationspro'}</label>
+                                </div>
                             </div>
-                        </div>
 
-                    {/if}
-                    {if !$in_shop_context}
-                        <div class="col-sm-12" style="margin-top: 5px;">
-                            <div class="row pull-left">
-                                <label
-                                    class="label label-danger">{l s='You need to be in the SHOP context to create orders, change to the store for this quotation.' mod='roja45quotationspro'}</label>
+                        {/if}
+                        {if !$in_shop_context}
+                            <div class="col-sm-12" style="margin-top: 5px;">
+                                <div class="row pull-left">
+                                    <label
+                                        class="label label-danger">{l s='You need to be in the SHOP context to create orders, change to the store for this quotation.' mod='roja45quotationspro'}</label>
+                                </div>
                             </div>
-                        </div>
-                    {/if}
+                        {/if}
+                    </div>
+
                 </div>
 
+                {if ($show_exchange_rate == 1)}
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-sm-12">
+                            <div class="panel panel-total">
+                                <p class="alert alert-warning">
+                                    {l s='The quotation is displaying in the selected currency.  Please be aware that currency fluctuations may result in changes to the prices you have previously saved.' mod='roja45quotationspro'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
             </div>
+        
+        {else}
 
-            {if ($show_exchange_rate == 1)}
-                <div class="row" style="margin-top: 10px;">
-                    <div class="col-sm-12">
-                        <div class="panel panel-total">
-                            <p class="alert alert-warning">
-                                {l s='The quotation is displaying in the selected currency.  Please be aware that currency fluctuations may result in changes to the prices you have previously saved.' mod='roja45quotationspro'}
-                            </p>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-actions clearfix">
+                        <div class="panel-heading">
+                            {l s='Actions' mod='roja45quotationspro'}
+                        </div>
+                        <div class="panel-body">
+                            {if !$quotation->is_template}
+                                <button type="button"
+                                    onclick="location.href='{$quotationspro_link}&action=downloadPDFQuotation&id_roja45_quotation={$quotation->id}'"
+                                    id="downloadPDFQuotation"
+                                    class="btn btn-secondary btn-lg downloadPDFQuotation disabled-while-saving">
+                                    <i class="icon-file-pdf-o" aria-hidden="true"></i>
+                                    {l s='Download PDF' mod='roja45quotationspro'}
+                                </button>
+                            {/if}
                         </div>
                     </div>
                 </div>
-            {/if}
-        </div>
+            </div>            
+        {/if}
     </form>
 </div>

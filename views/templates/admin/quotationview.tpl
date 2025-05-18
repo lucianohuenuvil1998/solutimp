@@ -11,6 +11,9 @@
 *  @license          /license.txtr
 *}
 
+{assign var="hoy" value=$smarty.now|date_format:"%Y-%m-%d"}
+{assign var="exp_date" value=$quotation->expiry_date|date_format:"%Y-%m-%d"}
+{assign var="expirada" value=$exp_date < $hoy}
 
 {assign var="container_style" value="background-color: #fff;"} {* Implementacion Fondo de color - Luciano *}
 
@@ -712,7 +715,7 @@
                     {if $quotation->id}
                         <div class="row">
                             <div class="col-xs-12">
-                                {include file='./quotationview_quotation.tpl'}
+                                {include file='./quotationview_quotation.tpl' expirada=$expirada}
                             </div>
                         </div>
                     {/if}
@@ -880,32 +883,35 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="panel">
-                            <div class="panel-heading">
-                                <i class="icon-envelope"></i> {l s='Set Status' mod='roja45quotationspro'}
-                            </div>
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <label class="control-label col-lg-3">
-                                        {l s='Set Status' mod='roja45quotationspro'}
-                                    </label>
-                                    <div class="col-lg-5">
-                                        <select class="form-control" name="quotation_status" id="quotation_status">
-                                            {foreach $quotation_statuses as $quotation_status}
-                                                <option
-                                                    value="{$quotation_status.id_roja45_quotation_status|escape:"html":"UTF-8"}"
-                                                    {if ($quotation->id_roja45_quotation_status==$quotation_status.id_roja45_quotation_status)}selected="selected"
-                                                    {/if}>{$quotation_status.status|escape:"html":"UTF-8"}</option>
-                                            {/foreach}
-                                        </select>
+
+                        {if !$expirada || (string)Context::getContext()->employee->id_profile == '1'}
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <i class="icon-envelope"></i> {l s='Set Status' mod='roja45quotationspro'}
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-3">
+                                            {l s='Set Status' mod='roja45quotationspro'}
+                                        </label>
+                                        <div class="col-lg-5">
+                                            <select class="form-control" name="quotation_status" id="quotation_status">
+                                                {foreach $quotation_statuses as $quotation_status}
+                                                    <option
+                                                        value="{$quotation_status.id_roja45_quotation_status|escape:"html":"UTF-8"}"
+                                                        {if ($quotation->id_roja45_quotation_status==$quotation_status.id_roja45_quotation_status)}selected="selected"
+                                                        {/if}>{$quotation_status.status|escape:"html":"UTF-8"}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="panel-footer">
+                                    <a href="#"
+                                        class="btn btn-primary btn-set-status">{l s='Set Status' mod='roja45quotationspro'}</a>
+                                </div>
                             </div>
-                            <div class="panel-footer">
-                                <a href="#"
-                                    class="btn btn-primary btn-set-status">{l s='Set Status' mod='roja45quotationspro'}</a>
-                            </div>
-                        </div>
+                        {/if}
                     </div>
                 </div>
             {/if}
@@ -1027,50 +1033,51 @@
     </form>
 </div>
 
-<div id="quotationspro_request_dialog" class="quotationspro_request_dialog quotationspro_dialog modal-dialog"
-    style="display:none">
-    <form action="{$quotationspro_link|escape:'html':'UTF-8'}&action=submitNewCustomerOrder" method="post"
-        id="quotationspro_form" class="std box">
-        <input type="hidden" name="id_roja45_quotation" value="{$quotation->id|escape:'html':'UTF-8'}">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">{l s='Select a Payment Method' mod='roja45quotationspro'}</h3>
-                <span class="cross" title="{l s='Close window' mod='roja45quotationspro'}"></span>
-            </div>
-            <div id="quotationspro_request_column_12" class="quotationspro_request modal-body">
-                <div class="quotationspro_request_column_container">
-                    <div class="form-group">
-                        <label class="control-label">{l s='Payment Method' mod='roja45quotationspro'}</label>
-                        <select name="payment_method">
-                            {foreach from=$payment_methods item=payment_method}
-                                <option value="{$payment_method.name|escape:'htmlall':'UTF-8'}">
-                                    {$payment_method.displayName|escape:'htmlall':'UTF-8'}
-                                    ({$payment_method.name|escape:'htmlall':'UTF-8'})</option>
-                            {/foreach}
-                        </select>
+
+    <div id="quotationspro_request_dialog" class="quotationspro_request_dialog quotationspro_dialog modal-dialog"
+        style="display:none">
+        <form action="{$quotationspro_link|escape:'html':'UTF-8'}&action=submitNewCustomerOrder" method="post"
+            id="quotationspro_form" class="std box">
+            <input type="hidden" name="id_roja45_quotation" value="{$quotation->id|escape:'html':'UTF-8'}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">{l s='Select a Payment Method' mod='roja45quotationspro'}</h3>
+                    <span class="cross" title="{l s='Close window' mod='roja45quotationspro'}"></span>
+                </div>
+                <div id="quotationspro_request_column_12" class="quotationspro_request modal-body">
+                    <div class="quotationspro_request_column_container">
+                        <div class="form-group">
+                            <label class="control-label">{l s='Payment Method' mod='roja45quotationspro'}</label>
+                            <select name="payment_method">
+                                {foreach from=$payment_methods item=payment_method}
+                                    <option value="{$payment_method.name|escape:'htmlall':'UTF-8'}">
+                                        {$payment_method.displayName|escape:'htmlall':'UTF-8'}
+                                        ({$payment_method.name|escape:'htmlall':'UTF-8'})</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">{l s='Initial Status' mod='roja45quotationspro'}</label>
+                            <select name="order_state">
+                                {foreach from=$order_states item=order_state}
+                                    <option value="{$order_state.id_order_state|escape:'htmlall':'UTF-8'}">
+                                        {$order_state.name|escape:'htmlall':'UTF-8'}</option>
+                                {/foreach}
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label">{l s='Initial Status' mod='roja45quotationspro'}</label>
-                        <select name="order_state">
-                            {foreach from=$order_states item=order_state}
-                                <option value="{$order_state.id_order_state|escape:'htmlall':'UTF-8'}">
-                                    {$order_state.name|escape:'htmlall':'UTF-8'}</option>
-                            {/foreach}
-                        </select>
+                </div>
+                <div class="modal-footer quotationspro_request buttons">
+                    <div class="button-container">
+                        <a id="quotationspro_createorder" class="btn btn-primary btn-create-order" href="#"
+                            title="{l s='Create Order' mod='roja45quotationspro'}" rel="nofollow">
+                            <span>{l s='Create Order' mod='roja45quotationspro'}</span>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer quotationspro_request buttons">
-                <div class="button-container">
-                    <a id="quotationspro_createorder" class="btn btn-primary btn-create-order" href="#"
-                        title="{l s='Create Order' mod='roja45quotationspro'}" rel="nofollow">
-                        <span>{l s='Create Order' mod='roja45quotationspro'}</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 
 <div id="quotationspro_addproduct_modal" class="quotationspro_addproduct_modal modal" aria-hidden="false"
     style="display: none;">
